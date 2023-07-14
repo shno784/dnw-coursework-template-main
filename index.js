@@ -14,6 +14,9 @@ global.db = new sqlite3.Database('./database.db',function(err){
   }
 });
 
+// Middleware to parse request body as JSON
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 const userRoutes = require('./routes/user');
 const authorRoute = require('./routes/author');
@@ -30,6 +33,7 @@ app.get('/', (req, res) => {
 app.use('/user', userRoutes);
 app.use('/author', authorRoute);
 app.use('/reader', readerRoute);
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
