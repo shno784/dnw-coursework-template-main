@@ -41,21 +41,30 @@ router.get("/settings", (req, res) => {
 
 });
 
+//User is able to edit the blog's title, subtitle and name
+//Takes these as req.body, updates the correct blog that the user is using and redirects them to the author page.
 router.post("/edit", (req, res, next) => {
     const {title, subtitle, username} = req.body;
 
     console.log(title, subtitle, username)
-
-    global.db.get("INSERT INTO blog (title, subtitle, username) VALUES (?, ?, ?",
-                    [title, subtitle, username],
+    
+    global.db.get("UPDATE blog SET title = ?, subtitle = ?, blog_username = ? WHERE id = ?",
+                    [title, subtitle, username, 1],
                     function (err) {
                         if (err) {
                             console.log(err);
                             next(err);
                             return;
-                        } else {
-                            // res.render("author-settings-page", {blogs});
-                        }
+                        } 
+                        global.db.all("SELECT * FROM blog", function (err, blogs) {
+                            if (err) {
+                                console.log(err)
+                                next(err);
+                                return;
+                            }
+                            res.redirect("/author");
+                        })                  
+                        
                     })
 })
 

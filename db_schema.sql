@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS blog (
     blog_username TEXT,
     title TEXT NOT NULL,
     subtitle TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (blog_username) REFERENCES users(username)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS article (
