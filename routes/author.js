@@ -6,13 +6,13 @@ const assert = require("assert");
 //Render Home page, it shows the blog title, subtitle, author name, it also shows articles which can be deleted, published, edited.
 router.get("/", (req, res, next) => {
     //Placeholder, will have to change based on user
-    global.db.all("SELECT * FROM blog", function (err, blogs) {
+    global.db.all("SELECT * FROM blog WHERE user_id = ?",[req.session.user], function (err, blogs) {
         if (err) {
             console.log(err);
             next(err);
             return;
         };
-
+        console.log(blogs)
         global.db.all("SELECT * FROM article", function (err, articles) {
             if (err) {
                 console.log(err);

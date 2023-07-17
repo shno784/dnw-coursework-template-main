@@ -7,100 +7,81 @@
 const express = require("express");
 const router = express.Router();
 const assert = require('assert');
+const Auth = require("../lib/auth");
 
-/**
- * @desc retrieves the current users
- */
-router.get("/get-test-users", (req, res, next) => {
+//Get create user page
+router.get("/signup", (req, res) => {
+    res.render("signup");
+});
 
-  //Use this pattern to retrieve data
-  //NB. it's better NOT to use arrow functions for callbacks with this library
-  global.db.all("SELECT * FROM testUsers", function (err, rows) {
-    if (err) {
-      next(err); //send the error on to the error handler
-    } else {
-      res.json(rows);
-    }
-  });
+
+// Create user
+router.post("/signup", async (req, res, next) => {
+    const {username, password} = req.body;
+    //Sends 1 if the author checkbox is ticked and 0 if it is not.
+    const author = req.body.author == 'on' ? 1: 0;
+    console.log(author)
+    const hashedPassword = await Auth.hashPassword(password);
+
+    global.db.all("INSERT INTO users (username, password_hash, author) VALUES (?, ?, ?)",
+        [username, hashedPassword, author], function (err) {
+            if (err) {
+                next(err)
+            }else {
+                res.send("Success!");
+            }
+    });
+    
+});
+
+
+//Get login page
+router.get("/login", (req, res) => {
+    res.render("login");
+});
+
+
+//Log user in
+router.post("/login", async (req, res, next) => {
+    const {username, password} = req.body;
+    
+    try {
+        //Get user Password 
+        const db_pass = await getUserPassword(username);
+
+        const pass = db_pass[0].password_hash
+    
+        //Use argon2, to check if the password matches the hashed one in the database
+        const isMatch = await Auth.checkPassword(pass, password);
   
-});
+        if (!isMatch) {
+            throw(error);
+        }
 
-/**
- * @desc retrieves the current user records
- */
-router.get("/get-user-records", (req, res, next) => {
-  //USE this pattern to retrieve data
-  //NB. it's better NOT to use arrow functions for callbacks with this library
-
-  global.db.all("SELECT * FROM testUserRecords", function (err, rows) {
-    if (err) {
-      next(err); //send the error on to the error handler
-    } else {
-      res.json(rows);
+        req.session.isLoggedIn = true;
+        req.session.user = db_pass[0].id;
+        res.redirect("/author");
+    } catch (error) {
+        console.log(error)
+        res.send("User or Password Incorrect!")
     }
-  });
+    
 });
 
-/**
- * @desc Renders the page for creating a user record
- */
-router.get("/create-user-record", (req, res) => {
-  res.render("create-user-record");
-});
 
-/**
- * @desc Add a new user record to the database for user id = 1
- */
-router.post("/create-user-record", (req, res, next) => {
-  //USE this pattern to update and insert data
-  //NB. it's better NOT to use arrow functions for callbacks with this library
-  const data = generateRandomData(10);
-  global.db.run(
-    "INSERT INTO testUserRecords ('test_record_value', 'test_user_id') VALUES( ?, ? );",
-    [data, 1],
-    function (err) {
-      if (err) {
-        next(err); //send the error on to the error handler
-      } else {
-        res.send(`New data inserted @ id ${this.lastID}!`);
-        next();
-      }
-    }
-  );
-});
-
-///////////////////////////////////////////// HELPERS ///////////////////////////////////////////
-
-/**
- * @desc A helper function to generate a random string
- * @returns a random lorem ipsum string
- */
-function generateRandomData(numWords = 5) {
-  const str =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
-
-  const words = str.split(" ");
-
-  let output = "";
-
-  for (let i = 0; i < numWords; i++) {
-    output += choose(words);
-    if (i < numWords - 1) {
-      output += " ";
-    }
+// Function to fetch the hashed password from the database based on the username
+function getUserPassword(username) {
+    return new Promise((resolve, reject) => {
+      db.all('SELECT id, password_hash FROM users WHERE username = ?', [username], (err, password) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+  
+        resolve(password);
+      });
+    });
   }
 
-  return output;
-}
-
-/**
- * @desc choose and return an item from an array
- * @returns the item
- */
-function choose(array) {
-  assert(Array.isArray(array), "Not an array");
-  const i = Math.floor(Math.random() * array.length);
-  return array[i];
-}
 
 module.exports = router;

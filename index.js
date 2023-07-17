@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const sqlite3 = require('sqlite3').verbose();
+const session = require('express-session');
 
 //items in the global namespace are accessible throught out the node application
 global.db = new sqlite3.Database('./database.db',function(err){
@@ -17,6 +18,13 @@ global.db = new sqlite3.Database('./database.db',function(err){
 // Middleware to parse request body as JSON
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+//Setup express-session Session
+app.use(session({
+  secret: 'UoL DNW',
+  resave: false,
+  saveUninitialized: true
+}))
 
 const userRoutes = require('./routes/user');
 const authorRoute = require('./routes/author');
