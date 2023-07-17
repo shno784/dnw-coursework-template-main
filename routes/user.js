@@ -6,7 +6,6 @@
 
 const express = require("express");
 const router = express.Router();
-const assert = require('assert');
 const Auth = require("../lib/auth");
 
 //Get create user page
@@ -20,7 +19,7 @@ router.post("/signup", async (req, res, next) => {
     const {username, password} = req.body;
     //Sends 1 if the author checkbox is ticked and 0 if it is not.
     const author = req.body.author == 'on' ? 1: 0;
-    console.log(author)
+
     const hashedPassword = await Auth.hashPassword(password);
 
     global.db.all("INSERT INTO users (username, password_hash, author) VALUES (?, ?, ?)",
@@ -28,7 +27,7 @@ router.post("/signup", async (req, res, next) => {
             if (err) {
                 next(err)
             }else {
-                res.send("Success!");
+                res.redirect("/user/login");
             }
     });
     
@@ -37,7 +36,8 @@ router.post("/signup", async (req, res, next) => {
 
 //Get login page
 router.get("/login", (req, res) => {
-    res.render("login");
+    const message = "";
+    res.render("login", {message});
 });
 
 
@@ -47,37 +47,54 @@ router.post("/login", async (req, res, next) => {
     
     try {
         //Get user Password 
-        const db_pass = await getUserPassword(username);
-
-        const pass = db_pass[0].password_hash
-    
+        const db_info = await getUserPassword(username);
+        const pass = db_info[0].password_hash;
         //Use argon2, to check if the password matches the hashed one in the database
         const isMatch = await Auth.checkPassword(pass, password);
   
         if (!isMatch) {
-            throw(error);
+            throw(err)
+  
         }
 
-        req.session.isLoggedIn = true;
-        req.session.user = db_pass[0].id;
-        res.redirect("/author");
+        //Store the user ID and if they are an author in the session
+        req.session.userId = db_info[0].id;
+        req.session.author = db_info[0].author;
+       
+        //Redirect based on if user is an author
+        if(req.session.author == 1) {
+            res.redirect("/author");
+        }else {
+            res.redirect("/reader")
+        }
+        
+        
     } catch (error) {
-        console.log(error)
-        res.send("User or Password Incorrect!")
+        const message = "Invalid Username or Password";
+        res.render("login", {message})
     }
     
 });
 
 
+router.get("/logout", (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) {
+            next(err);
+        } else {
+            res.redirect('/login');
+        }
+    })
+})
+
 // Function to fetch the hashed password from the database based on the username
 function getUserPassword(username) {
     return new Promise((resolve, reject) => {
-      db.all('SELECT id, password_hash FROM users WHERE username = ?', [username], (err, password) => {
+      db.all('SELECT id, password_hash, author FROM users WHERE username = ?', [username], (err, password) => {
         if (err) {
           reject(err);
           return;
         }
-  
         resolve(password);
       });
     });

@@ -37,14 +37,16 @@ CREATE TABLE IF NOT EXISTS blog (
 
 CREATE TABLE IF NOT EXISTS article (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     title TEXT NOT NULL,
     subtitle TEXT NOT NULL,
     body TEXT,
     date_created TEXT NOT NULL,
-    last_modified TEXT NOT NULL,
+    last_modified TEXT,
     published INTEGER,
     likes TEXT UNIQUE,
-    comments TEXT
+    comments TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 --insert default data (if necessary here)

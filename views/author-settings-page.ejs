@@ -9,19 +9,33 @@
 <body>
     <div class="container">
         <form action="/author/edit" method="post">
-            <% blogs.forEach(blog => { %>
+            <% if(blogs.length === 0) { %>
                 <label for="Blog title">Title</label>
-                <input type="text" name="title"  value="<%= blog.title %>" >
+                <input type="text" name="title"  value="" >
     
                 <label for="Blog subtitle">Subtitle</label>
-                <input type="text" value="<%= blog.subtitle %>" name="subtitle">
+                <input type="text" value="" name="subtitle">
     
                 <label for="Blog username">Name</label>
-                <input type="text" value="<%= blog.blog_username %>" name="username">
+                <input type="text" value="" name="username">
 
                 <button type="submit">Submit</button>
-    
-            <% }) %>     
+            <% } else { %>
+                <% blogs.forEach(blog => { %>
+                    <label for="Blog title">Title</label>
+                    <input type="text" name="title"  value="<%= blog.title %>" >
+        
+                    <label for="Blog subtitle">Subtitle</label>
+                    <input type="text" value="<%= blog.subtitle %>" name="subtitle">
+        
+                    <label for="Blog username">Name</label>
+                    <input type="text" value="<%= blog.blog_username %>" name="username">
+
+                    <button type="submit">Submit</button>
+        
+                <% }) %>     
+           <% } %>
+            
         </form>
     </div>
 </body>

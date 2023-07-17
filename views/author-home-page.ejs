@@ -7,14 +7,102 @@
     <title>CM2040 Template</title>
 </head>
 <body>
-    <% blogs.forEach(blog => { %>
-        <h1><%=blog.title %></h1>
-        <h2><%=blog.subtitle %></h2>
-        <h3><%=blog.blog_username %></h3>
-    <%}) %>
-    <form action="create-user-record" method="post">
-        <button type="submit">Create a new user record</button>
+    <% if (blogs.length === 0) { %>
+        <h1>Add Blog info from settings</h1>
+    <% } else { %>
+        <% blogs.forEach(blog => { %>
+            <h1><%=blog.title %></h1>
+            <h2><%=blog.subtitle %></h2>
+            <h3><%=blog.blog_username %></h3>
+        <%}) %>
+    <% } %>
+        
+    <h1>Draft Articles</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subtitle</th>
+                <th>Date Created</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (articles.length === 0) { %>
+
+            <% } else { %>
+                <% articles.forEach(article => { %>
+                    <% if(article.published == 0) { %>
+                        <tr>
+                            <td><%= article.title %></td>
+                            <td><%= article.subtitle %></td>
+                            <td><%= article.date_created %></td>
+                            <td>
+                                <form action="/author/edit-article/<%=article.id%>" method="get">
+                                    <button type="submit">Edit</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/author/delete-article/<%=article.id%>" method="post">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/author/publish-article/<%=article.id%>" method="post">
+                                    <button type="submit">Publish</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+
+
+    <h1>Published Articles</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subtitle</th>
+                <th>Date Created</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (articles.length === 0) { %>
+
+            <% } else { %>
+                <% articles.forEach(article => { %>
+                    <% if(article.published == 1) { %>
+                        <tr>
+                            <td><%= article.title %></td>
+                            <td><%= article.subtitle %></td>
+                            <td><%= article.date_created %></td>
+                            <td>
+                                <form action="/author/edit-article/<%=article.id%>" method="get">
+                                    <button type="submit">Edit</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/author/delete-article/<%=article.id%>" method="post">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+
+    <form action="/author/create-article" method="get">
+        <button type="submit">Create Article</button>
     </form>
     <a href="author/settings">Settings</a>
 </body>
 </html>
+
+
+
