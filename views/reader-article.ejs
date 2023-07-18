@@ -25,9 +25,11 @@
     <% }) %>
 
     <% comments.forEach(comment => { %>
-        <h2><%= comment.username %></h2>
-        <h2><%= comment.date_created%></h2>
-        <h2><%= comment.body%></h2>
+        <div class="comment">
+            <h2><%= comment.username %></h2>
+            <h2><%= comment.date_created%></h2>
+            <h2><%= comment.body%></h2>
+        </div>
     <% }) %>
 
 </body>
