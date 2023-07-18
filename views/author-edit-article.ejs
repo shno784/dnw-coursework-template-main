@@ -17,6 +17,14 @@
         <textarea name="body" rows="5" cols="40"><%= article.body %></textarea><br>
         <button type="submit">Update</button>
     </form>
+
+    <div class="info">
+      <p>Created: <%=article.date_created %> </p>
+      <p>Last modified: <%=article.last_modified %></p>
+      <p>Status: Draft</p>
+    </div>
 <% }) %>
+
+<a href="/author">Back</a>
 </body>
 </html>

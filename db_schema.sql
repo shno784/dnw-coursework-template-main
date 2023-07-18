@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS article (
     date_created TEXT NOT NULL,
     last_modified TEXT,
     published INTEGER,
+    publication_date TEXT,
     likes TEXT UNIQUE,
     comments TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)

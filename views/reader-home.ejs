@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <h1>HELLO READER</h1>
+    <h1>Articles</h1>
+
+    <% articles.forEach((article)=> { %>
+        <div class="clickableDiv" style="cursor: pointer;">
+            <form action="/reader/article/<%= article.id %>" method="get">
+                <h1>
+                    <%= article.title %>
+                </h1>
+                <h2>
+                    <%= article.subtitle %>
+                </h2>
+                <h2>
+                    <%= article.publication_date %>
+                </h2>
+            </form>
+        </div>
+        <% }) %>
 </body>
+
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        //Select all the divs
+        const clickableDivs = document.querySelectorAll('.clickableDiv');
+        clickableDivs.forEach(function (div) {
+            //add a click to the form to trigger submit when it is clicked
+            div.addEventListener('click', function () {
+                const form = this.querySelector('form');
+                form.submit();
+            });
+        });
+    });
+</script>

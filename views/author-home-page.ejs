@@ -81,9 +81,7 @@
                             <td><%= article.subtitle %></td>
                             <td><%= article.date_created %></td>
                             <td>
-                                <form action="/author/edit-article/<%=article.id%>" method="get">
-                                    <button type="submit">Edit</button>
-                                </form>
+                                <button onclick="shareLink(<%= article.id %>)">Share</button>
                             </td>
                             <td>
                                 <form action="/author/delete-article/<%=article.id%>" method="post">
@@ -98,11 +96,15 @@
     </table>
 
     <form action="/author/create-article" method="get">
-        <button type="submit">Create Article</button>
+        <button type="submit">Create new draft</button>
     </form>
     <a href="author/settings">Settings</a>
 </body>
 </html>
 
 
-
+<script>
+    function shareLink(id) {
+        alert(`This is your ID ${id}`)
+    }
+</script>

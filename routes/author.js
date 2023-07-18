@@ -126,7 +126,8 @@ router.post("/delete-article/:id", (req, res, next) => {
 
 router.post("/publish-article/:id", (req, res, next) => {
   const articleId = req.params.id;
-  global.db.all("UPDATE article SET published = ? WHERE id = ?", [1, articleId], function (err) {
+  const currentTime = new Date().toLocaleString();
+  global.db.all("UPDATE article SET published = ?, publication_date = ? WHERE id = ?", [1, currentTime, articleId], function (err) {
     if (err) {
       console.log(err)
       next(err);
