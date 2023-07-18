@@ -59,6 +59,7 @@ router.post("/login", async (req, res, next) => {
 
         //Store the user ID and if they are an author in the session
         req.session.userId = db_info[0].id;
+        req.session.username = username;
         req.session.author = db_info[0].author;
        
         //Redirect based on if user is an author
@@ -90,7 +91,7 @@ router.get("/logout", (req, res, next) => {
 // Function to fetch the hashed password from the database based on the username
 function getUserPassword(username) {
     return new Promise((resolve, reject) => {
-      db.all('SELECT id, password_hash, author FROM users WHERE username = ?', [username], (err, password) => {
+      db.all('SELECT * FROM users WHERE username = ?', [username], (err, password) => {
         if (err) {
           reject(err);
           return;

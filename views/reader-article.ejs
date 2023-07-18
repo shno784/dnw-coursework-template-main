@@ -11,10 +11,23 @@
         <h2><%= article.subtitle %></h2>
         <h3><%= article.body %></h3>
 
-        <h2>comments</h2>
+        
         <form action="/reader/like/<%= article.id %>" method="post">
-            <button type="submit">Likes <%= article.likes %></button>
+            <button type="submit">Likes <%= count %></button>
         </form>
+
+        <h2>comments</h2>
+        <form action="/reader/comment/<%= article.id %>" method="post">
+            <textarea name="body" rows="5" cols="40"></textarea><br>
+            <button type="submit">Submit Comment</button>
+        </form>
+    
+    <% }) %>
+
+    <% comments.forEach(comment => { %>
+        <h2><%= comment.username %></h2>
+        <h2><%= comment.date_created%></h2>
+        <h2><%= comment.body%></h2>
     <% }) %>
 
 </body>

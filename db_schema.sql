@@ -6,19 +6,6 @@ BEGIN TRANSACTION;
 
 --create your tables with SQL commands here (watch out for slight syntactical differences with SQLite)
 
-CREATE TABLE IF NOT EXISTS testUsers (
-    test_user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    test_name TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS testUserRecords (
-    test_record_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    test_record_value TEXT NOT NULL,
-    test_user_id  INT, --the user that the record belongs to
-    FOREIGN KEY (test_user_id) REFERENCES testUsers(test_user_id)
-);
-
-
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
@@ -45,18 +32,29 @@ CREATE TABLE IF NOT EXISTS article (
     last_modified TEXT,
     published INTEGER,
     publication_date TEXT,
-    likes TEXT UNIQUE,
-    comments TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS likes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE,
+    article_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (article_id) REFERENCES article(id)
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    article_id INTEGER NOT NULL,
+    date_created TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
+    body TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (article_id) REFERENCES article(id)
+);
+
 --insert default data (if necessary here)
-
-INSERT INTO testUsers ('test_name') VALUES ('Simon Star');
-INSERT INTO testUserRecords ('test_record_value', 'test_user_id') VALUES( 'Lorem ipsum dolor sit amet', 1); --try changing the test_user_id to a different number and you will get an error
-
--- INSERT INTO testUsers ('test_name') VALUES ('Boob');
--- INSERT INTO testUserRecords ('test_record_value', 'test_user_id') VALUES( 'Lorem ipsum dolor sit amet', 1); --try changing the test_user_id to a different number and you will get an error
 
 INSERT INTO users (id,username,password_hash,author) VALUES (1, 'admin','admin1', 0);
 INSERT INTO blog(id, user_id, blog_username, title, subtitle) VALUES (1, 1, 'admin', 'love', 'live');

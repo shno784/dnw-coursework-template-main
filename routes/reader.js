@@ -22,7 +22,22 @@ router.get("/article/:id", (req, res, next) => {
             next(err);
             return;
         }
-        res.render("reader-article", {articles});
+        global.db.all("SELECT COUNT(*) FROM likes WHERE article_id = ?", [articleId], function (err, likes) {
+            if (err) {
+                next(err);
+                return;
+            }
+            const count = likes[0]['COUNT(*)'];
+        
+            global.db.all("SELECT * FROM comments WHERE article_id = ?", [articleId], function (err, comments) {
+                if(err) {
+                    next(err);
+                    return;
+                }
+                res.render("reader-article", {articles, count, comments});
+            })
+        })
+        
     })
     
 });
@@ -31,25 +46,45 @@ router.get("/article/:id", (req, res, next) => {
 router.post("/like/:id", (req, res, next) => {
     const articleId = req.params.id;
     
-    global.db.all("SELECT likes FROM article WHERE id = ?", [articleId], function (err, like) {
+    global.db.all("SELECT * FROM likes WHERE article_id = ? AND user_id = ?", [articleId, req.session.userId], function (err, like) {
+        
         if (err) {
             next(err);
             return;
         }
-
-        const likes = like.likes || 0;
-
-        if (likes > 0) {
-            console.log("Already liked")
-        } else {
-            global.db.all("UPDATE article SET likes = likes + 1 WHERE user_id = ?", [articleId], function (err) {
+        //If the like is not found, put it into the db, if it is there, remove it
+        if(like.length == 0) {
+            global.db.all("INSERT INTO likes (user_id, article_id) VALUES (?, ?) ", [req.session.userId, articleId], function (err) {
                 if (err) {
                     next(err);
                     return;
                 }
             })
-            res.redirect(`/reader/article/${articleId}`)
+        } else {
+            global.db.all("DELETE FROM likes WHERE user_id = ?", [req.session.userId], function (err) {
+                if(err) {
+                    next(err);
+                    return;
+                }
+            })
         }
+        res.redirect(`/reader/article/${articleId}`)
+    })
+});
+
+router.post("/comment/:id", (req, res, next) => {
+    const articleId = req.params.id;
+    const {body} = req.body;
+    const currentTime = new Date().toLocaleString();
+
+    console.log(req.session.username)
+    const data = [req.session.userId, articleId, currentTime, req.session.username, body]
+    global.db.all("INSERT INTO comments (user_id, article_id, date_created, username, body) VALUES (?, ?, ?, ?, ?)", data , function (err) {
+        if (err) {
+            next(err);
+            return;
+        }
+        res.redirect(`/reader/article/${articleId}`)
     })
 })
 
