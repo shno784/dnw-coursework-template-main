@@ -10,7 +10,12 @@
         <h1><%= article.title %></h1>
         <h2><%= article.subtitle %></h2>
         <h3><%= article.body %></h3>
+
+        <h2>comments</h2>
+        <form action="/reader/like/<%= article.id %>" method="post">
+            <button type="submit">Likes <%= article.likes %></button>
+        </form>
     <% }) %>
-    <h2>comments</h2>
+
 </body>
 </html>
