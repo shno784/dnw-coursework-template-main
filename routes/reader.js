@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const requireLogin = require("../lib/requireLogin");
+const requireLogin = require("../middleware/requireLogin");
 
 //Render Home page
 router.get("/", (req, res, next) => {

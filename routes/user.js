@@ -5,27 +5,23 @@
 
 const express = require("express");
 const router = express.Router();
-const Auth = require("../lib/auth");
-const { body, validationResult } = require('express-validator');
+const Auth = require("../middleware/auth");
+const { validateUser } = require('../middleware/validateUser')
 
 //Get create user page
 router.get("/signup", (req, res) => {
-  res.render("signup");
+  const errors = "";
+  res.render("signup", {errors});
 });
 
 // Create user
 router.post("/signup",
-  body('username').trim().notEmpty().withMessage('Name is required')
-  .matches(/^[a-zA-Z0-9]+$/).withMessage('Username must contain only letters and numbers'),
+  validateUser,
   async (req, res, next) => {
     const { username, password } = req.body;
     //Sends 1 if the author checkbox is ticked and 0 if it is not.
     const author = req.body.author == "on" ? 1 : 0;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const hashedPassword = await Auth.hashPassword(password);
 
     global.db.all(
@@ -43,12 +39,12 @@ router.post("/signup",
 
 //Get login page
 router.get("/login", (req, res) => {
-  const message = "";
-  res.render("login", { message });
+  const errors = "";
+  res.render("login", { errors });
 });
 
 //Log user in
-router.post("/login", async (req, res, next) => {
+router.post("/login", validateUser ,async (req, res, next) => {
   const { username, password } = req.body;
 
   try {

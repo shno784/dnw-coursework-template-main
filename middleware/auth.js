@@ -9,6 +9,7 @@ async function hashPassword(password) {
     }
 }
 
+//Compare hashed password in database to what the user is entering
 async function checkPassword(hashedPassword, password) {
 
     try {
@@ -22,12 +23,4 @@ async function checkPassword(hashedPassword, password) {
     }
 }
 
-async function checkAuthor(isAuthor) {
-    if(isAuthor == 1) {
-        res.redirect("/author");
-        }else {
-            res.redirect("/reader")
-        }
-}
-
-module.exports = {hashPassword, checkPassword, checkAuthor};
+module.exports = {hashPassword, checkPassword};

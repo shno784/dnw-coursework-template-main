@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const requireLogin = require("../lib/requireLogin");
-const requireAuthor = require("../lib/requireAuthor");
+const requireLogin = require("../middleware/requireLogin");
+const requireAuthor = require("../middleware/requireAuthor");
 
 //Renders Author homepage, shows blog title, subtitle and name. 
 // Also shows article information
@@ -56,7 +56,7 @@ router.get("/settings", requireLogin, requireAuthor, (req, res) => {
 
 //User is able to edit the blog's title, subtitle and name
 //Takes these as req.body, updates the correct blog that the user is using and redirects them to the author page.
-router.post("/edit", requireLogin, requireAuthor, (req, res, next) => {
+router.post("/edit" ,requireLogin, requireAuthor, (req, res, next) => {
   const { title, subtitle, username } = req.body;
 
   //Inserts a new blog into the database if it does not exist, if it exists, update it.
@@ -82,7 +82,7 @@ router.get("/create-article", (req, res) => {
 
 //Author can create an article, takes the title, subtitle, body and 
 //the current time to be put into the database
-router.post("/create-article", (req, res, next) => {
+router.post("/create-article",(req, res, next) => {
   const { title, subtitle, body } = req.body;
   const currentTime = new Date().toLocaleString();
   //Insert a new article into the article database

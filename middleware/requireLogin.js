@@ -3,8 +3,8 @@ module.exports = function requireLogin(req, res, next) {
         //User is Logged in.
         next();
     } else {
-        const message = "Please Login to continue";
+        const errors = "Please Login to continue";
         //User is not logged in, redirect them to login page with message
-        res.render("login", {message});
+        res.render("login", {errors});
     }
 }
