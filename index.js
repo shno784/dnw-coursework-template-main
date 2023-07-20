@@ -39,7 +39,7 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.render('main-page.ejs')
 });
 
 //this adds all the userRoutes to the app under the path /user

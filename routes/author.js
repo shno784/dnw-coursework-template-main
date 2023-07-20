@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const requireLogin = require("../middleware/requireLogin");
 const requireAuthor = require("../middleware/requireAuthor");
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
+const { validateBlog } = require("../middleware/validateBlog");
 
-//Renders Author homepage, shows blog title, subtitle and name. 
+//Renders Author homepage, shows blog title, subtitle and name.
 // Also shows article information
 router.get("/", requireLogin, requireAuthor, (req, res, next) => {
   //Get blog from database that belongs to the logged in user.
@@ -58,58 +59,69 @@ router.get("/settings", requireLogin, requireAuthor, (req, res) => {
 
 //User is able to edit the blog's title, subtitle and name
 //Takes these as req.body, updates the correct blog that the user is using and redirects them to the author page.
-router.post("/edit", body('title').trim().notEmpty().withMessage("Title cannot be empty!")
-  .matches(/^[A-Za-z]+$/).withMessage("Title must be Letter only!"),
-
-  body('subtitle').trim().notEmpty().withMessage("Subtitle cannot be empty!")
-    .matches(/^[A-Za-z]+$/).withMessage("Subtitle must be Letter only!"),
-
-  body('username').trim().notEmpty().withMessage("Name cannot be empty!")
-    .matches(/^[A-Za-z]+$/).withMessage("Name must be Letter only!")
-  , requireLogin, requireAuthor, (req, res, next) => {
+router.post(
+  "/edit",
+  validateBlog,
+  requireLogin,
+  requireAuthor,
+  (req, res, next) => {
     const { title, subtitle, username } = req.body;
 
+    global.db.all(
+      "SELECT * FROM blog WHERE user_id = ?",
+      [req.session.userId],
+      function (err, blogs) {
+        if (err) {
+          next(err);
+          return;
+        }
 
-    global.db.all("SELECT * FROM blog WHERE user_id = ?", [req.session.userId], function (err, blogs) {
-      if (err) {
-        next(err);
-        return;
-      }
-
-      //If there is no blog in the database, insert it
-      if (blogs.length == 0) {
-        global.db.all("INSERT INTO blog (title, subtitle, blog_username, user_id) VALUES (?, ?, ?, ?);", [title, subtitle, username, req.session.userId], function (err) {
-          if (err) {
-            next(err);
-            return;
-          }
-        });
-        //Update if row is found
-      } else {
-        global.db.all("UPDATE blog SET title = ?, subtitle = ?, blog_username = ?", [title, subtitle, username], function (err) {
-          if (err) {
-            next(err);
-            return;
-          }
-        })
         //If there is an error, return it to the page
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          return res.render('author-settings-page', { blogs, errors: errors.array() });
-        } else {
-          res.redirect("/author");
+          return res.render("author-settings-page", {
+            blogs,
+            errors: errors.array(),
+          });
         }
-
+        //If there is no blog in the database, insert it
+        if (blogs.length == 0) {
+          global.db.all(
+            "INSERT INTO blog (title, subtitle, blog_username, user_id) VALUES (?, ?, ?, ?);",
+            [title, subtitle, username, req.session.userId],
+            function (err) {
+              if (err) {
+                next(err);
+                return;
+              }
+            }
+          );
+          //Update if row is found
+        } else {
+          global.db.all(
+            "UPDATE blog SET title = ?, subtitle = ?, blog_username = ?",
+            [title, subtitle, username],
+            function (err) {
+              if (err) {
+                next(err);
+                return;
+              }
+            }
+          );
+        }
+        res.redirect("/author");
       }
-    })
-  });
+    );
+  }
+);
 
 //Renders create-article page for author
 router.get("/create-article", (req, res) => {
-  res.render("author-create-article");
+  const articles = "";
+  res.render("author-edit-article", { articles });
 });
 
-//Author can create an article, takes the title, subtitle, body and 
+//Author can create an article, takes the title, subtitle, body and
 //the current time to be put into the database
 router.post("/create-article", (req, res, next) => {
   const { title, subtitle, body } = req.body;

@@ -1,52 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <form action="/author/edit" method="post">
-            <% if(blogs.length===0) { %>
-                <label for="Blog title">Title</label>
-                <input type="text" name="title" value="" required>
+      <form action="/author/edit" method="post">
+        <% if(blogs.length===0) { %>
+        <label for="Blog title">Title</label>
+        <input type="text" name="title" value="" required />
 
-                <label for="Blog subtitle">Subtitle</label>
-                <input type="text" value="" name="subtitle" required>
+        <label for="Blog subtitle">Subtitle</label>
+        <input type="text" value="" name="subtitle" required />
 
-                <label for="Blog username">Name</label>
-                <input type="text" value="" name="username" required>
+        <label for="Blog username">Name</label>
+        <input type="text" value="" name="username" required />
 
-                <button type="submit">Submit</button>
-                <% } else { %>
-                    <% blogs.forEach(blog=> { %>
-                        <label for="Blog title">Title</label>
-                        <input type="text" name="title" value="<%= blog.title %>">
+        <button type="submit">Submit</button>
+        <% } else { %> <% blogs.forEach(blog=> { %>
+        <label for="Blog title">Title</label>
+        <input type="text" name="title" value="<%= blog.title %>" />
 
-                        <label for="Blog subtitle">Subtitle</label>
-                        <input type="text" value="<%= blog.subtitle %>" name="subtitle">
+        <label for="Blog subtitle">Subtitle</label>
+        <input type="text" value="<%= blog.subtitle %>" name="subtitle" />
 
-                        <label for="Blog username">Name</label>
-                        <input type="text" value="<%= blog.blog_username %>" name="username">
+        <label for="Blog username">Name</label>
+        <input type="text" value="<%= blog.blog_username %>" name="username" />
 
-                        <button type="submit">Submit</button>
+        <button type="submit">Submit</button>
 
-                        <% if (errors && errors.length> 0) { %>
-                            <% errors.forEach(error=> { %>
-                                <p>
-                                    <%= error.msg %>
-                                </p>
-                                <% }) %>
-                                    <% } %>
-                                        <% }) %>
-                                            <% } %>
-
-        </form>
+        <% if (errors && errors.length> 0) { %> <% errors.forEach(error=> { %>
+        <p><%= error.msg %></p>
+        <% }) %> <% } %> <% }) %> <% } %>
+      </form>
     </div>
-</body>
-
+  </body>
 </html>
