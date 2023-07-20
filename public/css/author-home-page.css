@@ -15,3 +15,9 @@
 .custom-table tbody td {
     color: #333;
 }
+
+.logout-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}

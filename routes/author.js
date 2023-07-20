@@ -116,16 +116,17 @@ router.post(
 );
 
 //Renders create-article page for author
-router.get("/create-article", (req, res) => {
+router.get("/create-article", requireLogin, requireAuthor,(req, res) => {
   const articles = "";
   res.render("author-edit-article", { articles });
 });
 
 //Author can create an article, takes the title, subtitle, body and
 //the current time to be put into the database
-router.post("/create-article", (req, res, next) => {
+router.post("/create-article", requireLogin, requireAuthor,(req, res, next) => {
   const { title, subtitle, body } = req.body;
   const currentTime = new Date().toLocaleString();
+  
   //Insert a new article into the article database
   global.db.get(
     "INSERT INTO article (title, subtitle, body, date_created, user_id, published) VALUES (?, ?, ?, ?, ?, ?)",
@@ -141,7 +142,7 @@ router.post("/create-article", (req, res, next) => {
 });
 
 //Get the edit article page, populate the fields with the article to be edited
-router.get("/edit-article/:id", (req, res) => {
+router.get("/edit-article/:id", requireLogin, requireAuthor,(req, res) => {
   const articleId = req.params.id;
   //Search the database for the article that matches the id
   global.db.all(
@@ -158,7 +159,7 @@ router.get("/edit-article/:id", (req, res) => {
   );
 });
 //Updates the article that was edited by the author
-router.post("/edit-article/:id", (req, res, next) => {
+router.post("/edit-article/:id", requireLogin, requireAuthor,(req, res, next) => {
   const articleId = req.params.id;
   const { title, subtitle, body } = req.body;
   const currentTime = new Date().toLocaleString();
@@ -177,7 +178,7 @@ router.post("/edit-article/:id", (req, res, next) => {
 });
 
 //Deletes an article
-router.post("/delete-article/:id", (req, res, next) => {
+router.post("/delete-article/:id", requireLogin, requireAuthor,(req, res, next) => {
   const articleId = req.params.id;
   //Find and delete the article from the database that matches the ID.
   global.db.all(
@@ -194,7 +195,7 @@ router.post("/delete-article/:id", (req, res, next) => {
 });
 
 //Change the article from being Draft to Published
-router.post("/publish-article/:id", (req, res, next) => {
+router.post("/publish-article/:id", requireLogin, requireAuthor,(req, res, next) => {
   const articleId = req.params.id;
   const currentTime = new Date().toLocaleString();
   //Updates the published field in the article with the correct ID to published and add the time that it was published.

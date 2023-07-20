@@ -16,6 +16,11 @@
         <div class="d-flex justify-content-end">
           <a href="author/settings" class="btn btn-primary mt-3">Settings</a>
         </div>
+
+        <!-- Logout button aligned to the top-left corner -->
+        <form action="/user/logout" method="get">
+          <button type="submit" class="btn btn-secondary logout-button">Logout</button>
+        </form>
     
         <h1>Author Home Page</h1>
         <% if (blogs.length === 0) { %>
@@ -107,7 +112,7 @@
           <button type="submit" class="btn btn-primary mt-5">Create new draft</button>
         </form>
       </div>
-
+      
 </body>
 </html>
 

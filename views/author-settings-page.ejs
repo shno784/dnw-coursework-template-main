@@ -4,39 +4,60 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Blog Settings</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/author-edit-article.css">
   </head>
+  <div class="container">
+    <h1>Author Edit</h1>
 
-  <body>
-    <div class="container">
-      <form action="/author/edit" method="post">
-        <% if(blogs.length===0) { %>
-        <label for="Blog title">Title</label>
-        <input type="text" name="title" value="" required />
+    <form action="/author/edit" method="post">
+        <% if (blogs.length === 0) { %>
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="form-control" value="" required>
+        </div>
 
-        <label for="Blog subtitle">Subtitle</label>
-        <input type="text" value="" name="subtitle" required />
+        <div class="form-group">
+            <label for="subtitle">Subtitle</label>
+            <input type="text" name="subtitle" class="form-control" value="" required>
+        </div>
 
-        <label for="Blog username">Name</label>
-        <input type="text" value="" name="username" required />
+        <div class="form-group">
+            <label for="username">Name</label>
+            <input type="text" name="username" class="form-control" value="" required>
+        </div>
 
-        <button type="submit">Submit</button>
-        <% } else { %> <% blogs.forEach(blog=> { %>
-        <label for="Blog title">Title</label>
-        <input type="text" name="title" value="<%= blog.title %>" />
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <% } else { %>
+        <% blogs.forEach(blog => { %>
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="form-control" value="<%= blog.title %>" required>
+        </div>
 
-        <label for="Blog subtitle">Subtitle</label>
-        <input type="text" value="<%= blog.subtitle %>" name="subtitle" />
+        <div class="form-group">
+            <label for="subtitle">Subtitle</label>
+            <input type="text" name="subtitle" class="form-control" value="<%= blog.subtitle %>" required>
+        </div>
 
-        <label for="Blog username">Name</label>
-        <input type="text" value="<%= blog.blog_username %>" name="username" />
+        <div class="form-group">
+            <label for="username">Name</label>
+            <input type="text" name="username" class="form-control" value="<%= blog.blog_username %>" required>
+        </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
-        <% if (errors && errors.length> 0) { %> <% errors.forEach(error=> { %>
-        <p><%= error.msg %></p>
-        <% }) %> <% } %> <% }) %> <% } %>
-      </form>
-    </div>
-  </body>
+    
+    <% if (errors && errors.length > 0) { %>
+      <% errors.forEach(error => { %>
+      <p><%= error.msg %></p>
+      <% }) %>
+      <% } %>
+      <% }) %>
+      <% } %>
+    <!-- Back button aligned to the top-left corner -->
+    <a href="/author" class="btn btn-secondary back-button">Back</a>
+</div>
 </html>
