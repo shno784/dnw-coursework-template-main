@@ -11,7 +11,7 @@ const { validateUser } = require('../middleware/validateUser')
 //Get create user page
 router.get("/signup", (req, res) => {
   const errors = "";
-  res.render("signup", {errors});
+  res.render("signup", { errors });
 });
 
 // Create user
@@ -26,7 +26,7 @@ router.post("/signup",
 
     global.db.all(
       "INSERT INTO users (username, password_hash, author) VALUES (?, ?, ?)",
-      [username, hashedPassword, author],
+      [username.toLowerCase(), hashedPassword, author],
       function (err) {
         if (err) {
           next(err);
@@ -44,12 +44,12 @@ router.get("/login", (req, res) => {
 });
 
 //Log user in
-router.post("/login", validateUser ,async (req, res, next) => {
+router.post("/login", validateUser, async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
     //Get user Password
-    const db_info = await getUserPassword(username);
+    const db_info = await getUserPassword(username.toLowerCase());
     const pass = db_info[0].password_hash;
     //Use argon2, to check if the password matches the hashed one in the database
     const isMatch = await Auth.checkPassword(pass, password);
@@ -70,8 +70,8 @@ router.post("/login", validateUser ,async (req, res, next) => {
       res.redirect("/reader");
     }
   } catch (error) {
-    const message = "Invalid Username or Password";
-    res.render("login", { message });
+    const errors = "Invalid Username or Password";
+    res.render("login", { errors });
   }
 });
 
