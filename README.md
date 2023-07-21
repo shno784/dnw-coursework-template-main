@@ -63,10 +63,13 @@ Make sure that your package.json file includes all of the dependencies for your 
 
 #### Getting started with my project ####
 
-Edit this section to include any settings that should be adjusted in configuration files and concise instructions for how to access the reader and author pages once the app is running.
+The username and Password will be avaiable in the db_schema.sql file. 
+To access author pages in URL- localhost:3000/author
+To access reader pages in URL - localhost:3000/reader
 
-NB. we will ONLY run ```npm install```, ```npm run build-db```, and ```npm run start``` . We will NOT install additional packages to run your code and will NOT run additional build scripts. Be careful with any additional node dependencies that you use.
+Authors can also be readers and read other users' blogs and articles.
 
+In the author page, PLEASE ENSURE TO CREATE A BLOG IN SETTINGS (If creating a new user) or the article will not update properly in the database.
 
 
 
