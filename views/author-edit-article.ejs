@@ -52,10 +52,24 @@
           <button type="submit" class="btn btn-primary">Update</button>
       </form>
 
-      <div class="info">
-          <p>Created: <%= article.date_created %> </p>
-          <p>Last modified: <%= article.last_modified %></p>
-          <p>Status: Draft</p>
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header">
+          Article Information
+        </div>
+        
+        <!-- Card body -->
+        <div class="card-body">
+          <div class="info">
+            <p>Created: <%= article.date_created %> </p>
+            <p>Last modified: <%= article.last_modified %></p>
+            <% if(article.published == 1) { %>
+              <p>Status: Published</p>
+            <% } else { %>
+              <p>Status: Draft</p>
+            <% } %>
+          </div>
+        </div>
       </div>
       <% }) %>
       <% } %>

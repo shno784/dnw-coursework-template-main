@@ -62,7 +62,7 @@
                           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
                         <form action="/author/publish-article/<%= article.id %>" method="post">
-                          <button type="submit" class="btn btn-success btn-sm">Publish</button>
+                          <button id="publish-article" type="submit" class="btn btn-success btn-sm" onclick="return publish()">Publish</button>
                         </form>
                       </td>
                     </tr>
@@ -81,6 +81,9 @@
                 <th>Title</th>
                 <th>Subtitle</th>
                 <th>Date Created</th>
+                <th>Last Modified</th>
+                <th>Published</th>
+                <th>likes</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -94,7 +97,13 @@
                       <td><%= article.title %></td>
                       <td><%= article.subtitle %></td>
                       <td><%= article.date_created %></td>
+                      <td><%= article.last_modified %></td>
+                      <td><%= article.publication_date %></td>
+                      <td><%= article.like_number %></td>
                       <td>
+                        <form action="/author/edit-article/<%= article.id %>" method="get">
+                          <button type="submit" class="btn btn-success btn-sm">Edit</button>
+                        </form>
                         <button onclick="shareLink(<%= article.id %>)" class="btn btn-primary btn-sm">Share</button>
                         <form action="/author/delete-article/<%= article.id %>" method="post">
                           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -118,7 +127,18 @@
 
 
 <script>
+    //Returns link to share to the user
     function shareLink(id) {
         alert(`localhost:3000/reader/article/${id}`)
-    }
+    };
+    //Shows popup for when user hits publish
+    function publish() {
+      if(confirm('Are you sure you want to publish?')) {
+        //If the user clicks OK
+        document.getElementById('publish-article').submit();
+        return true;
+      } else {
+        return false;
+      }
+    };
 </script>

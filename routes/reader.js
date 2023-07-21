@@ -4,6 +4,7 @@ const requireLogin = require("../middleware/requireLogin");
 
 //Render Home page
 router.get("/", (req, res, next) => {
+  const username = req.session.username
   global.db.all(
     "SELECT * FROM article WHERE published = ?",
     [1],
@@ -12,7 +13,7 @@ router.get("/", (req, res, next) => {
         next(err);
         return;
       }
-      res.render("reader-home", { articles });
+      res.render("reader-home", { articles, username });
     }
   );
 });
@@ -80,8 +81,8 @@ router.post("/like/:id", requireLogin, (req, res, next) => {
         );
       } else {
         global.db.all(
-          "DELETE FROM likes WHERE user_id = ?",
-          [req.session.userId],
+          "DELETE FROM likes WHERE article_id = ? AND user_id = ?",
+          [articleId, req.session.userId],
           function (err) {
             if (err) {
               next(err);
