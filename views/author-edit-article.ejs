@@ -1,81 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Article</title>
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/author-edit-article.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Article</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/author-edit-article.css" />
+  </head>
   <body>
     <div class="container">
       <h1>Author Edit</h1>
-
+      <!-- If article length is 0 this means no article is in the database and to leave the form empty -->
       <% if (articles.length == 0) { %>
       <form action="/author/create-article" method="POST">
-          <div class="form-group">
-              <label for="title">Title</label>
-              <input type="text" name="title" class="form-control" value="" required>
-          </div>
+        <div class="form-group">
+          <!-- Title area -->
+          <label for="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            class="form-control"
+            value=""
+            required
+          />
+        </div>
 
-          <div class="form-group">
-              <label for="subtitle">Subtitle</label>
-              <input type="text" name="subtitle" class="form-control" value="" required>
-          </div>
+        <div class="form-group">
+          <!-- subtitle area -->
+          <label for="subtitle">Subtitle</label>
+          <input
+            type="text"
+            name="subtitle"
+            class="form-control"
+            value=""
+            required
+          />
+        </div>
 
-          <div class="form-group">
-              <label for="body">Body</label>
-              <textarea name="body" class="form-control" rows="5" cols="40" required></textarea>
-          </div>
+        <div class="form-group">
+          <!-- Body area -->
+          <label for="body">Body</label>
+          <textarea
+            name="body"
+            class="form-control"
+            rows="5"
+            cols="40"
+            required
+          ></textarea>
+        </div>
 
-          <button type="submit" class="btn btn-primary">Create Draft</button>
+        <button type="submit" class="btn btn-primary">Create Draft</button>
       </form>
-      <% } else { %>
-      <% articles.forEach(article => { %>
+      <!-- If there is an article, fill out the info -->
+      <% } else { %> <% articles.forEach(article => { %>
       <form action="/author/edit-article/<%=article.id%>" method="POST">
-          <div class="form-group">
-              <label for="title">Title</label>
-              <input type="text" name="title" class="form-control" value="<%= article.title %>" required>
-          </div>
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            class="form-control"
+            value="<%= article.title %>"
+            required
+          />
+        </div>
 
-          <div class="form-group">
-              <label for="subtitle">Subtitle</label>
-              <input type="text" name="subtitle" class="form-control" value="<%= article.subtitle %>" required>
-          </div>
+        <div class="form-group">
+          <label for="subtitle">Subtitle</label>
+          <input
+            type="text"
+            name="subtitle"
+            class="form-control"
+            value="<%= article.subtitle %>"
+            required
+          />
+        </div>
 
-          <div class="form-group">
-              <label for="body">Body</label>
-              <textarea name="body" class="form-control" rows="5" cols="40" required><%= article.body %></textarea>
-          </div>
+        <div class="form-group">
+          <label for="body">Body</label>
+          <textarea
+            name="body"
+            class="form-control"
+            rows="5"
+            cols="40"
+            required
+          >
+          <%= article.body %></textarea
+          >
+        </div>
 
-          <button type="submit" class="btn btn-primary">Update</button>
+        <button type="submit" class="btn btn-primary">Update</button>
       </form>
 
       <div class="card">
-        <!-- Card header -->
-        <div class="card-header">
-          Article Information
-        </div>
-        
-        <!-- Card body -->
+        <div class="card-header">Article Information</div>
         <div class="card-body">
           <div class="info">
-            <p>Created: <%= article.date_created %> </p>
+            <p>Created: <%= article.date_created %></p>
             <p>Last modified: <%= article.last_modified %></p>
             <% if(article.published == 1) { %>
-              <p>Status: Published</p>
+            <p>Status: Published</p>
             <% } else { %>
-              <p>Status: Draft</p>
+            <p>Status: Draft</p>
             <% } %>
           </div>
         </div>
       </div>
-      <% }) %>
-      <% } %>
+      <% }) %> <% } %>
 
       <!-- Back button aligned to the top-left corner -->
       <a href="/author" class="btn btn-secondary back-button">Back</a>
-  </div>
-</body>
+    </div>
+  </body>
 </html>

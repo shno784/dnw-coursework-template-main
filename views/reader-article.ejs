@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reader article</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/author-edit-article.css">
-</head>
-<body class="container mt-5">
+    <link rel="stylesheet" href="/css/author-edit-article.css" />
+  </head>
+  <body class="container mt-5">
+    <!-- Show article information -->
     <% articles.forEach(article => { %>
     <div class="mb-5">
-      <h2><%= article.title %></h1>
-      <h3><%= article.subtitle %></h2>
+      <h2><%= article.title %></h2>
+      <h3><%= article.subtitle %></h3>
       <p><%= article.body %></p>
-  
+      <p>Date Published: <%= article.publication_date %></p>
+
       <form action="/reader/like/<%= article.id %>" method="post">
-        <button type="submit" class="btn btn-primary">Likes <%= count %></button>
+        <button type="submit" class="btn btn-primary">
+          Likes <%= count %>
+        </button>
       </form>
-  
+      <!-- Show article comments -->
       <h2 class="mt-4">Comments</h2>
-      <form action="/reader/comment/<%= article.id %>" method="post" class="mb-4">
+      <form
+        action="/reader/comment/<%= article.id %>"
+        method="post"
+        class="mb-4"
+      >
         <div class="form-group">
           <textarea name="body" rows="5" class="form-control"></textarea>
         </div>
@@ -27,17 +35,16 @@
       </form>
     </div>
     <% }) %>
-  
+    <!-- Show each comment below  -->
     <% comments.forEach(comment => { %>
     <div class="comment border p-3 mb-5">
-      <h3><%= comment.username %></h2>
-      <h3><%= comment.date_created %></h2>
+      <h3><%= comment.username %></h3>
+      <h3><%= comment.date_created %></h3>
       <p><%= comment.body %></p>
     </div>
     <% }) %>
 
     <!-- Back button aligned to the top-left corner -->
     <a href="/reader" class="btn btn-secondary back-button">Back</a>
-  
   </body>
 </html>

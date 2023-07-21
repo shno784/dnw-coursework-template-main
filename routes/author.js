@@ -116,33 +116,46 @@ router.post(
 );
 
 //Renders create-article page for author
-router.get("/create-article", requireLogin, requireAuthor,(req, res) => {
+router.get("/create-article", requireLogin, requireAuthor, (req, res) => {
   const articles = "";
   res.render("author-edit-article", { articles });
 });
 
 //Author can create an article, takes the title, subtitle, body and
 //the current time to be put into the database
-router.post("/create-article", requireLogin, requireAuthor,(req, res, next) => {
-  const { title, subtitle, body } = req.body;
-  const currentTime = new Date().toLocaleString();
-  
-  //Insert a new article into the article database
-  global.db.get(
-    "INSERT INTO article (title, subtitle, body, date_created, user_id, published) VALUES (?, ?, ?, ?, ?, ?)",
-    [title, subtitle, body, currentTime, req.session.userId, 0],
-    function (err) {
+router.post(
+  "/create-article",
+  requireLogin,
+  requireAuthor,
+  (req, res, next) => {
+    const { title, subtitle, body } = req.body;
+    const currentTime = new Date().toLocaleString();
+
+    global.db.all("SELECT * FROM blog WHERE user_id = ?", [req.session.userId], function (err, blogs) {
       if (err) {
         next(err);
         return;
       }
-      res.redirect("/author");
-    }
-  );
-});
+      const blogIdArr = blogs.map(blog => blog.id);
+      const blogId = blogIdArr[0];
+    //Insert a new article into the article database
+    global.db.get(
+      "INSERT INTO article (title, subtitle, body, date_created, user_id, blog_id, published) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [title, subtitle, body, currentTime, req.session.userId, blogId, 0],
+      function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+        res.redirect("/author");
+      }
+    );
+    })
+  }
+);
 
 //Get the edit article page, populate the fields with the article to be edited
-router.get("/edit-article/:id", requireLogin, requireAuthor,(req, res) => {
+router.get("/edit-article/:id", requireLogin, requireAuthor, (req, res) => {
   const articleId = req.params.id;
   //Search the database for the article that matches the id
   global.db.all(
@@ -159,58 +172,73 @@ router.get("/edit-article/:id", requireLogin, requireAuthor,(req, res) => {
   );
 });
 //Updates the article that was edited by the author
-router.post("/edit-article/:id", requireLogin, requireAuthor,(req, res, next) => {
-  const articleId = req.params.id;
-  const { title, subtitle, body } = req.body;
-  const currentTime = new Date().toLocaleString();
-  //Update the article with the correct ID and store it in the database.
-  global.db.all(
-    "UPDATE article SET title = ?, subtitle = ?, body = ?, last_modified = ? WHERE id = ?",
-    [title, subtitle, body, currentTime, articleId],
-    function (err) {
-      if (err) {
-        next(err);
-        return;
+router.post(
+  "/edit-article/:id",
+  requireLogin,
+  requireAuthor,
+  (req, res, next) => {
+    const articleId = req.params.id;
+    const { title, subtitle, body } = req.body;
+    const currentTime = new Date().toLocaleString();
+    //Update the article with the correct ID and store it in the database.
+    global.db.all(
+      "UPDATE article SET title = ?, subtitle = ?, body = ?, last_modified = ? WHERE id = ?",
+      [title, subtitle, body, currentTime, articleId],
+      function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+        res.redirect("/author");
       }
-      res.redirect("/author");
-    }
-  );
-});
+    );
+  }
+);
 
 //Deletes an article
-router.post("/delete-article/:id", requireLogin, requireAuthor,(req, res, next) => {
-  const articleId = req.params.id;
-  //Find and delete the article from the database that matches the ID.
-  global.db.all(
-    "DELETE FROM article WHERE id = ?",
-    [articleId],
-    function (err) {
-      if (err) {
-        next(err);
-        return;
+router.post(
+  "/delete-article/:id",
+  requireLogin,
+  requireAuthor,
+  (req, res, next) => {
+    const articleId = req.params.id;
+    //Find and delete the article from the database that matches the ID.
+    global.db.all(
+      "DELETE FROM article WHERE id = ?",
+      [articleId],
+      function (err) {
+        if (err) {
+          next(err);
+          return;
+        }
+        res.redirect("/author");
       }
-      res.redirect("/author");
-    }
-  );
-});
+    );
+  }
+);
 
 //Change the article from being Draft to Published
-router.post("/publish-article/:id", requireLogin, requireAuthor,(req, res, next) => {
-  const articleId = req.params.id;
-  const currentTime = new Date().toLocaleString();
-  //Updates the published field in the article with the correct ID to published and add the time that it was published.
-  global.db.all(
-    "UPDATE article SET published = ?, publication_date = ? WHERE id = ?",
-    [1, currentTime, articleId],
-    function (err) {
-      if (err) {
-        console.log(err);
-        next(err);
-        return;
+router.post(
+  "/publish-article/:id",
+  requireLogin,
+  requireAuthor,
+  (req, res, next) => {
+    const articleId = req.params.id;
+    const currentTime = new Date().toLocaleString();
+    //Updates the published field in the article with the correct ID to published and add the time that it was published.
+    global.db.all(
+      "UPDATE article SET published = ?, publication_date = ? WHERE id = ?",
+      [1, currentTime, articleId],
+      function (err) {
+        if (err) {
+          console.log(err);
+          next(err);
+          return;
+        }
+        res.redirect("/author");
       }
-      res.redirect("/author");
-    }
-  );
-});
+    );
+  }
+);
 
 module.exports = router;

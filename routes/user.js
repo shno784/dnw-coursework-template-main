@@ -1,8 +1,3 @@
-/**
- * These are example routes for user management
- * This shows how to correctly structure your routes for the project
- */
-
 const express = require("express");
 const router = express.Router();
 const Auth = require("../middleware/auth");
@@ -20,8 +15,10 @@ router.post("/signup", validateUser, async (req, res, next) => {
   //Sends 1 if the author checkbox is ticked and 0 if it is not.
   const author = req.body.author == "on" ? 1 : 0;
 
+  //Hash the password
   const hashedPassword = await Auth.hashPassword(password);
 
+  //Store the username in all lowercase, hashed password and if the user is an author in the database
   global.db.all(
     "INSERT INTO users (username, password_hash, author) VALUES (?, ?, ?)",
     [username.toLowerCase(), hashedPassword, author],
@@ -29,19 +26,20 @@ router.post("/signup", validateUser, async (req, res, next) => {
       if (err) {
         next(err);
       } else {
+        //redirect to login page
         res.redirect("/user/login");
       }
     }
   );
 });
 
-//Get login page
+//Renders login page
 router.get("/login", (req, res) => {
   const errors = "";
   res.render("login", { errors });
 });
 
-//Log user in
+//Logs the user in if the username and password are correct
 router.post("/login", validateUser, async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -51,12 +49,12 @@ router.post("/login", validateUser, async (req, res, next) => {
     const pass = db_info[0].password_hash;
     //Use argon2, to check if the password matches the hashed one in the database
     const isMatch = await Auth.checkPassword(pass, password);
-
+    //Throw error if the password does not match
     if (!isMatch) {
       throw err;
     }
 
-    //Store the user ID and if they are an author in the session
+    //Store the user ID, username and if they are an author in the session
     req.session.userId = db_info[0].id;
     req.session.username = username;
     req.session.author = db_info[0].author;
@@ -73,7 +71,9 @@ router.post("/login", validateUser, async (req, res, next) => {
   }
 });
 
+//Logs the user out
 router.get("/logout", (req, res, next) => {
+  //Destroy express-session session
   req.session.destroy((err) => {
     if (err) {
       next(err);
@@ -86,6 +86,7 @@ router.get("/logout", (req, res, next) => {
 // Function to fetch the hashed password from the database based on the username
 function getUserPassword(username) {
   return new Promise((resolve, reject) => {
+    //Search the database for if the username exists
     db.all(
       "SELECT * FROM users WHERE username = ?",
       [username],

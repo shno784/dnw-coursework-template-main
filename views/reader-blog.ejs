@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reader Blogs</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/reader-home.css" />
+  </head>
+
+  <body>
+    <!-- Back button aligned to the top-left corner -->
+    <a href="/reader" class="btn btn-secondary back-button">Back</a>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+          <!-- Show blog title, subtitle and username  -->
+          <% blogs.forEach(blog => { %>
+          <h1><%= blog.title %></h1>
+          <h2><%= blog.subtitle %></h2>
+          <h3><%= blog.blog_username %></h3>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+    <!-- Ensure that only three articles per row and show article information -->
+    <% articles.forEach((article, index) => { %> <% if (index % 3 === 0) { %>
+    <div class="row justify-content-start">
+      <% } %>
+      <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+        <!-- Use col-lg-4 for large screens, col-md-6 for medium screens, and col-sm-12 for small screens -->
+        <div class="clickableDiv" style="cursor: pointer">
+          <form action="/reader/article/<%= article.id %>" method="get">
+            <div class="card">
+              <div class="card-body">
+                <h1 class="card-title"><%= article.title %></h1>
+                <h2 class="card-subtitle mb-2 text-muted">
+                  <%= article.subtitle %>
+                </h2>
+                <h2 class="card-subtitle mb-2 text-muted">
+                  <%= article.publication_date %>
+                </h2>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </body>
+</html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    //Select all the divs
+    const clickableDivs = document.querySelectorAll(".clickableDiv");
+    clickableDivs.forEach(function (div) {
+      //add a click to the form to trigger submit when it is clicked
+      div.addEventListener("click", function () {
+        const form = this.querySelector("form");
+        form.submit();
+      });
+    });
+  });
+</script>

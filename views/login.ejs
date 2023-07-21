@@ -1,39 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-</head>
+  <body>
+    <div
+      class="container d-flex align-items-center justify-content-center vh-100"
+    >
+      <div class="text-center border rounded p-4">
+        <!-- Login Header -->
+        <h1>Login</h1>
+        <form action="/user/login" method="POST">
+          <div class="mb-3">
+            <!-- Username header -->
+            <label for="username" class="form-label">Username:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-control"
+              required
+            />
+          </div>
 
-<body>
-  <div class="container d-flex align-items-center justify-content-center vh-100">
-    <div class="text-center border rounded p-4">
-      <h1>Login</h1>
-      <form action="/user/login" method="POST">
-        <div class="mb-3">
-          <label for="username" class="form-label">Username:</label>
-          <input type="text" id="username" name="username" class="form-control" required>
-        </div>
+          <div class="mb-3">
+            <!-- Password header -->
+            <label for="password" class="form-label">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              required
+            />
+          </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label">Password:</label>
-          <input type="password" id="password" name="password" class="form-control" required>
-        </div>
+          <input type="submit" value="Login" class="btn btn-primary" />
+          <!-- Redirect user to signup page -->
+          <a href="/user/signup" class="btn btn-secondary"
+            >No account? Signup</a
+          >
+        </form>
 
-        <input type="submit" value="Login" class="btn btn-primary">
-        <a href="/user/signup" class="btn btn-secondary">No account? Signup</a>
-      </form>
-
-      <% if (errors) { %>
-        <div class="message">
-          <%= errors %>
-        </div>
+        <!-- Show errors if there are any -->
+        <% if (errors) { %>
+        <div class="message"><%= errors %></div>
         <% } %>
+      </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>
