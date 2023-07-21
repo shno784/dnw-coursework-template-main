@@ -8,7 +8,7 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    user_password TEXT NOT NULL,
     author INTEGER
 );
 
@@ -55,6 +55,22 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (article_id) REFERENCES article(id)
 );
+
+-- User number 1
+INSERT INTO users ('username', 'user_password', 'author') VALUES ('admin', 'Admin1', 1);
+INSERT INTO blog ('user_id', 'blog_username', 'title', 'subtitle') VALUES ('1', 'Admin', 'Lovely Day', 'Today');
+INSERT INTO article ('user_id', 'title', 'subtitle', 'body','date_created', 'last_modified', 'published', 'publication_date', 'like_number', 'blog_id') VALUES 
+(1, 'Forsaken', 'The realm of the wicked', 'For once In my life I was a little boy who wanted to see the world.', '7/22/2023, 10:30:15 AM', '7/22/2023, 10:30:15 AM', 1, '7/22/2023, 10:30:15 AM', 5, 1);
+
+
+-- User number 2
+
+
+-- User number 3
+
+
+
+
 
 
 COMMIT;

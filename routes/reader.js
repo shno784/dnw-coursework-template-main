@@ -9,12 +9,12 @@ router.get("/", (req, res, next) => {
 
   //Show all blogs
   global.db.all("SELECT * FROM blog", function (err, blogs) {
-    if(err) {
+    if (err) {
       next(err);
       return;
     }
-    res.render("reader-home", {blogs, username })
-  })
+    res.render("reader-home", { blogs, username });
+  });
 });
 
 router.get("/blog/:id", (req, res, next) => {
@@ -29,13 +29,17 @@ router.get("/blog/:id", (req, res, next) => {
         next(err);
         return;
       }
-      global.db.all("SELECT * FROM blog WHERE id = ?", [blogId], function (err, blogs) {
-        if (err) {
-          next(err);
-          return;
+      global.db.all(
+        "SELECT * FROM blog WHERE id = ?",
+        [blogId],
+        function (err, blogs) {
+          if (err) {
+            next(err);
+            return;
+          }
+          res.render("reader-blog", { articles, blogs });
         }
-        res.render("reader-blog", { articles, blogs });
-      })
+      );
     }
   );
 });

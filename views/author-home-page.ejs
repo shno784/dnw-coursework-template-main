@@ -27,6 +27,7 @@
       <!-- If the length of the blogs is 0 show the text below -->
       <% if (blogs.length === 0) { %>
       <h2 class="mt-3">Add Blog info from settings</h2>
+      <h2 class="mt-3">You NEED to do this before creating an article</h2>
       <!-- If not, show the blog title, subtitle and username -->
       <% } else { %> <% blogs.forEach(blog => { %>
       <h1 class="mt-3 center-text"><%= blog.title %></h1>
