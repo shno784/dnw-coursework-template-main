@@ -71,5 +71,12 @@ Authors can also be readers and read other users' blogs and articles.
 
 In the author page, PLEASE ENSURE TO CREATE A BLOG IN SETTINGS (If creating a new user) or the article will not update properly in the database.
 
+If the marker is using a windows computer, ensure these changes in the package.json file:
+    * "build-db": "type db_schema.sql |sqlite3 database.db ",
+    * "clean-db": "del database.db #remove the old database",
+    * "start": "nodemon index.js"
+    * Use ' single quotations for the dummy database data in the db_schema.sql file
+    * These have been set back to the way they were when I first downloaded the file which is used for Mac.
+
 
 
