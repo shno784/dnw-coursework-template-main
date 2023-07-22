@@ -18,7 +18,9 @@
 
       <form action="/reader/like/<%= article.id %>" method="post">
         <button type="submit" class="btn btn-primary">
-          Likes <%= count %>
+          <% likes.forEach(like => { %>
+            Likes  <%= like.like_number %>
+          <% }) %>
         </button>
       </form>
       <!-- Show article comments -->
@@ -29,7 +31,7 @@
         class="mb-4"
       >
         <div class="form-group">
-          <textarea name="body" rows="5" class="form-control"></textarea>
+          <textarea name="body" rows="5" class="form-control" required></textarea>
         </div>
         <button type="submit" class="btn btn-success">Submit Comment</button>
       </form>

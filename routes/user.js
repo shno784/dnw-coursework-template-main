@@ -16,7 +16,7 @@ router.post("/signup", validateUser, async (req, res, next) => {
 
   //Store the username in all lowercase, hashed password and if the user is an author in the database
   global.db.all(
-    "INSERT INTO users (username, user_password, author) VALUES (?, ?, ?)",
+    "INSERT INTO users ('username', 'user_password', 'author') VALUES (?, ?, ?)",
     [username.toLowerCase(), password, author],
     function (err) {
       if (err) {

@@ -75,8 +75,12 @@ If the marker is using a windows computer, ensure these changes in the package.j
     * "build-db": "type db_schema.sql |sqlite3 database.db ",
     * "clean-db": "del database.db #remove the old database",
     * "start": "nodemon index.js"
-    * Use ' single quotations for the dummy database data in the db_schema.sql file
-    * These have been set back to the way they were when I first downloaded the file which is used for Mac.
+    * Since I am using windows I had to change the dummy data in the db_schema.sql file from ' quotation to ", this has been reverted to the original when downloaded including the
+     package.json file.
 
+Pre existing account usernames and passwords(Username is not case sensitive):
+    * Username: admin    Password: Admin1
+    * Username: administrator    Password: Admin1
+    * Username: reader    Password: reader1
 
 

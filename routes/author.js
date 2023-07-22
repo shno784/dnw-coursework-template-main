@@ -87,7 +87,7 @@ router.post(
         //If there is no blog in the database, insert it
         if (blogs.length == 0) {
           global.db.all(
-            "INSERT INTO blog (title, subtitle, blog_username, user_id) VALUES (?, ?, ?, ?);",
+            "INSERT INTO blog ('title', 'subtitle', 'blog_username','user_id') VALUES (?, ?, ?, ?);",
             [title, subtitle, username, req.session.userId],
             function (err) {
               if (err) {
@@ -99,8 +99,8 @@ router.post(
           //Update if row is found
         } else {
           global.db.all(
-            "UPDATE blog SET title = ?, subtitle = ?, blog_username = ?",
-            [title, subtitle, username],
+            "UPDATE blog SET title = ?, subtitle = ?, blog_username = ? WHERE user_id = ?",
+            [title, subtitle, username, req.session.userId],
             function (err) {
               if (err) {
                 next(err);
@@ -131,26 +131,31 @@ router.post(
     const { title, subtitle, body } = req.body;
     const currentTime = new Date().toLocaleString();
 
-    global.db.all("SELECT * FROM blog WHERE user_id = ?", [req.session.userId], function (err, blogs) {
-      if (err) {
-        next(err);
-        return;
-      }
-      const blogIdArr = blogs.map(blog => blog.id);
-      const blogId = blogIdArr[0];
-    //Insert a new article into the article database
-    global.db.get(
-      "INSERT INTO article (title, subtitle, body, date_created, user_id, blog_id, published) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [title, subtitle, body, currentTime, req.session.userId, blogId, 0],
-      function (err) {
+    global.db.all(
+      "SELECT * FROM blog WHERE user_id = ?",
+      [req.session.userId],
+      function (err, blogs) {
         if (err) {
+          console.log(err);
           next(err);
           return;
         }
-        res.redirect("/author");
+        const blogIdArr = blogs.map((blog) => blog.id);
+        const blogId = blogIdArr[0];
+        //Insert a new article into the article database
+        global.db.get(
+          "INSERT INTO article ('title', 'subtitle', 'body', 'date_created', 'user_id', 'blog_id', 'published') VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [title, subtitle, body, currentTime, req.session.userId, blogId, 0],
+          function (err) {
+            if (err) {
+              next(err);
+              return;
+            }
+            res.redirect("/author");
+          }
+        );
       }
     );
-    })
   }
 );
 
@@ -202,7 +207,7 @@ router.post(
   requireAuthor,
   (req, res, next) => {
     const articleId = req.params.id;
-    //Find and delete the article from the database that matches the ID.
+    //Find and delete the article, its likes and comments from the database that matches the ID.
     global.db.all(
       "DELETE FROM article WHERE id = ?",
       [articleId],
@@ -211,7 +216,27 @@ router.post(
           next(err);
           return;
         }
-        res.redirect("/author");
+        global.db.all(
+          "DELETE FROM likes WHERE article_id = ?",
+          [articleId],
+          function (err) {
+            if (err) {
+              next(err);
+              return;
+            }
+            global.db.all(
+              "DELETE FROM comments WHERE article_id = ?",
+              [articleId],
+              function (err) {
+                if (err) {
+                  next(err);
+                  return;
+                }
+              }
+            );
+            res.redirect("/author");
+          }
+        );
       }
     );
   }

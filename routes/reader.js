@@ -58,14 +58,13 @@ router.get("/article/:id", (req, res, next) => {
       }
       //Gets the amount of likes for the specific article
       global.db.all(
-        "SELECT COUNT(*) FROM likes WHERE article_id = ?",
+        "SELECT like_number FROM article WHERE id = ?",
         [articleId],
         function (err, likes) {
           if (err) {
             next(err);
             return;
           }
-          const count = likes[0]["COUNT(*)"];
           //Gets all comments for the specific article
           global.db.all(
             "SELECT * FROM comments WHERE article_id = ? ORDER BY date_created DESC",
@@ -75,7 +74,7 @@ router.get("/article/:id", (req, res, next) => {
                 next(err);
                 return;
               }
-              res.render("reader-article", { articles, count, comments });
+              res.render("reader-article", { articles, likes, comments });
             }
           );
         }
@@ -100,7 +99,7 @@ router.post("/like/:id", requireLogin, (req, res, next) => {
       //If the like is not found, put it into the database
       if (like.length == 0) {
         global.db.all(
-          "INSERT INTO likes (user_id, article_id) VALUES (?, ?) ",
+          "INSERT INTO likes ('user_id', 'article_id') VALUES (?, ?) ",
           [req.session.userId, articleId],
           function (err) {
             if (err) {
@@ -154,7 +153,7 @@ router.post("/comment/:id", requireLogin, (req, res, next) => {
   ];
   //Adds the comment to the article
   global.db.all(
-    "INSERT INTO comments (user_id, article_id, date_created, username, body) VALUES (?, ?, ?, ?, ?)",
+    "INSERT INTO comments ('user_id', 'article_id', 'date_created', 'username', 'body') VALUES (?, ?, ?, ?, ?)",
     data,
     function (err) {
       if (err) {
